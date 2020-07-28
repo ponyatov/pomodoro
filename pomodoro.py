@@ -38,6 +38,7 @@ stopq = queue.Queue(1)
 ## timer background function (clicks every 1 sec)
 def upd():
     idx = 0
+    flips = [planning, triangle]
     timer = dt.timedelta(minutes=5)#15
     stopt = dt.timedelta(minutes=0)
     while True:
@@ -52,7 +53,7 @@ def upd():
                 break
             print('%s' % timer)
             tray.setToolTip('%s' % timer)
-            tray.setIcon([planning, triangle][idx % 2])
+            tray.setIcon(flips[idx % len(flips)])
             idx += 1
 
 
