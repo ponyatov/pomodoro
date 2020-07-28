@@ -47,7 +47,7 @@ def upd():
             tray.setIcon(icon)
             break
         except queue.Empty:
-            timer -= dt.timedelta(minutes=1)#seconds=1)
+            timer -= dt.timedelta(minutes=1)#minutes=1)#seconds=1)
             if timer < stopt:
                 tray.setIcon(icon)
                 break
@@ -59,9 +59,20 @@ def upd():
 
 ## timer background thread
 th = threading.Thread(target=upd)
-th.start()
+
+def go():
+    global th
+    if th.is_alive():
+        stopq.put('stop')
+        time.sleep(1)
+    th = threading.Thread(target=upd)
+    th.start()
+
+
+action.triggered.connect(go)
 
 
 app.exec_()
-stopq.put('stop')
-th.join()
+if th.is_alive():
+    stopq.put('stop')
+    th.join()
