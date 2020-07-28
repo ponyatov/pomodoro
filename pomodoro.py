@@ -37,21 +37,22 @@ stopq = queue.Queue(1)
 
 ## timer background function (clicks every 1 sec)
 def upd():
-    icon = [planning, triangle]
     idx = 0
     timer = dt.timedelta(minutes=5)#15
     stopt = dt.timedelta(minutes=0)
     while True:
         try:
             stopq.get(timeout=1)
+            tray.setIcon(icon)
             break
         except queue.Empty:
             timer -= dt.timedelta(minutes=1)#seconds=1)
             if timer < stopt:
+                tray.setIcon(icon)
                 break
             print('%s' % timer)
-            tray.setToolTip(time.strftime('%H:%M:%S', time.localtime()))
-            tray.setIcon(icon[idx % 2])
+            tray.setToolTip('%s' % timer)
+            tray.setIcon([planning, triangle][idx % 2])
             idx += 1
 
 
