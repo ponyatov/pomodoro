@@ -33,3 +33,22 @@ $(PIP) $(PY):
 .PHONY: requirements.txt
 requirements.txt: $(PIP)
 	$< freeze | grep -v 0.0.0 > $@
+
+.PHONY: master shadow release
+
+MERGE  = Makefile README.md .gitignore .vscode apt.txt requirements.txt
+MERGE += $(MODULE).py logo.png nologo.png
+
+master:
+	git checkout $@
+	git pull -v
+	git checkout shadow -- $(MERGE)
+
+shadow:
+	git checkout $@
+	git pull -v
+
+release:
+	git tag $(NOW)-$(REL)
+	git push -v && git push -v --tags
+	$(MAKE) shadow
