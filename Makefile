@@ -8,10 +8,11 @@ REL = $(shell git rev-parse --short=4 HEAD)
 PIP = $(CWD)/bin/pip3
 PY  = $(CWD)/bin/python3
 
-.PHONY: all
+.PHONY: all py
 all: py
 
 py: $(PY) $(MODULE).py
+	$^
 
 .PHONY: install update
 
@@ -28,3 +29,7 @@ $(PIP) $(PY):
 	python3 -m venv .
 	$(PIP) install -U pip pylint autopep8
 	$(MAKE) requirements.txt
+
+.PHONY: requirements.txt
+requirements.txt: $(PIP)
+	$< freeze | grep -v 0.0.0 > $@
