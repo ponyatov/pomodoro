@@ -1,19 +1,20 @@
 # https://build-system.fman.io/pyqt5-tutorial
 # https://www.learnpyqt.com/courses/adanced-ui-features/system-tray-mac-menu-bar-applications-pyqt/
 
+import os, sys, time, datetime as dt
+
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 app = QApplication([])
 
 ## icon
-planning = QIcon('planning.png')
-triangle = QIcon('triangle.png')
-icon = planning
+logo = QIcon('logo.png')
+nologo = QIcon('nologo.png')
 
 ## system tray app
 tray = QSystemTrayIcon()
-tray.setIcon(icon)
+tray.setIcon(logo)
 tray.setVisible(True)
 
 ## popup menu
@@ -30,7 +31,6 @@ menu.addAction(quit)
 quit.triggered.connect(app.quit)
 
 import threading, queue
-import time, datetime as dt
 
 ## thread stop signaling queue
 stopq = queue.Queue(1)
@@ -38,19 +38,19 @@ stopq = queue.Queue(1)
 ## timer background function (clicks every 1 sec)
 def upd():
     idx = 0
-    flips = [planning, triangle]
-    timer = dt.timedelta(minutes=5)#15
+    flips = [nologo, logo]
+    timer = dt.timedelta(minutes=15)#15
     stopt = dt.timedelta(minutes=0)
     while True:
         try:
             stopq.get(timeout=1)
-            tray.setIcon(icon)
+            tray.setIcon(logo)
+            tray.showMessage(sys.argv[0], '', logo)
             break
         except queue.Empty:
-            timer -= dt.timedelta(minutes=1)#minutes=1)#seconds=1)
+            timer -= dt.timedelta(seconds=1)#minutes=1)#seconds=1)
             if timer < stopt:
-                tray.setIcon(icon)
-                break
+                stopq.put('stop')
             print('%s' % timer)
             tray.setToolTip('%s' % timer)
             tray.setIcon(flips[idx % len(flips)])
